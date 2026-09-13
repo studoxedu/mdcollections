@@ -1,0 +1,2 @@
+import * as SecureStore from 'expo-secure-store';import * as Crypto from 'expo-crypto';import{supabase}from'./supabase';
+export const DEVICE_KEY='shopstock.device_id';export const getDeviceId=async()=>{let id=await SecureStore.getItemAsync(DEVICE_KEY);if(!id){id=Crypto.randomUUID();await SecureStore.setItemAsync(DEVICE_KEY,id)}return id};export const signIn=async(email:string,password:string)=>supabase?.auth.signInWithPassword({email,password});export const signOut=async()=>{await SecureStore.deleteItemAsync('shopstock.session');if(supabase)await supabase.auth.signOut()};

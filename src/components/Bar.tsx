@@ -1,0 +1,1 @@
+import React from'react';import{View}from'react-native';import{colors}from'../constants/theme';export default({value,max=100}:{value:number;max?:number})=><View style={{height:8,backgroundColor:colors.border,borderRadius:9,overflow:'hidden'}}><View style={{height:8,width:`${Math.min(100,value/max*100)}%`,backgroundColor:colors.primary}}/></View>;
