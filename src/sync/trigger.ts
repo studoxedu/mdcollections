@@ -1,1 +1,0 @@
-import {AppState} from 'react-native'; import {runSync} from './engine'; export const useAutoSync=(enabled=true)=>{let last=AppState.currentState;const sub=AppState.addEventListener('change',s=>{if(enabled&&last.match(/inactive|background/)&&s==='active')void runSync();last=s});return()=>sub.remove()};
