@@ -1,0 +1,112 @@
+import React from "react";
+import { Alert, Image, Text, View } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  Screen,
+  Card,
+  Button,
+  Metric,
+  Row,
+  Title,
+} from "../../../src/components/ui";
+import { one, q } from "../../../src/database/client";
+import { deactivateProduct } from "../../../src/repositories/core";
+import { money, dateTime } from "../../../src/utils/format";
+export default () => {
+  const { id } = useLocalSearchParams<{ id: string }>(),
+    r = useRouter(),
+    p = one<any>(
+      "SELECT p.*,c.name cat FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE p.id=?",
+      [id],
+    );
+  if (!p)
+    return (
+      <Screen title="Product">
+        <Text>Product not found.</Text>
+      </Screen>
+    );
+  const mov = q<any>(
+    "SELECT * FROM stock_movements WHERE product_id=? ORDER BY created_at DESC LIMIT 8",
+    [id],
+  );
+  return (
+    <Screen title="Product detail">
+      <Card>
+        {p.image_local_uri && (
+          <Image
+            source={{ uri: p.image_local_uri }}
+            style={{
+              width: 96,
+              height: 96,
+              borderRadius: 12,
+              marginBottom: 10,
+            }}
+          />
+        )}
+        <Text style={{ fontSize: 22, fontWeight: "700" }}>{p.name}</Text>
+        <Text style={{ color: "#5A6478" }}>
+          {p.sku} · {p.cat}
+        </Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "700",
+            color: "#115FE6",
+            marginTop: 12,
+          }}
+        >
+          {money(p.selling_price)}
+        </Text>
+      </Card>
+      <View style={{ flexDirection: "row" }}>
+        <Card style={{ flex: 1, marginRight: 6 }}>
+          <Metric label="Stock" value={p.current_stock} />
+        </Card>
+        <Card style={{ flex: 1, marginLeft: 6 }}>
+          <Metric
+            label="Margin"
+            value={`${Math.round(((p.selling_price - p.cost_price) / p.selling_price) * 100)}%`}
+          />
+        </Card>
+      </View>
+      <Button
+        title="Sell this product"
+        onPress={() => r.push("/(app)/sell" as any)}
+      />
+      <Button
+        title="Deactivate"
+        danger
+        onPress={() =>
+          Alert.alert(
+            "Deactivate product",
+            "This hides the product from active inventory.",
+            [
+              { text: "Cancel" },
+              {
+                text: "Deactivate",
+                onPress: () => {
+                  deactivateProduct(id);
+                  r.back();
+                },
+              },
+            ],
+          )
+        }
+      />
+      <Title>Stock history</Title>
+      {mov.map((x) => (
+        <Row key={x.id}>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontWeight: "700" }}>
+              {x.type} · {x.direction === "IN" ? "+" : "-"}
+              {x.quantity}
+            </Text>
+            <Text style={{ color: "#5A6478" }}>
+              {x.reason || "No reason"} · {dateTime(x.created_at)}
+            </Text>
+          </View>
+        </Row>
+      ))}
+    </Screen>
+  );
+};

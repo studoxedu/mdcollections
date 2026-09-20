@@ -1,0 +1,37 @@
+import React from "react";
+import { Text, View } from "react-native";
+import { colors } from "../constants/theme";
+export default ({
+  pending = 0,
+  failed = false,
+}: {
+  pending?: number;
+  failed?: boolean;
+}) => (
+  <View
+    style={{
+      alignSelf: "flex-start",
+      backgroundColor: failed
+        ? colors.dangerTint
+        : pending
+          ? colors.warningTint
+          : colors.successTint,
+      borderRadius: 999,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+    }}
+  >
+    <Text
+      style={{
+        fontSize: 12,
+        color: failed
+          ? colors.danger
+          : pending
+            ? colors.warning
+            : colors.success,
+      }}
+    >
+      {failed ? "Sync failed" : pending ? `${pending} pending` : "Synced"}
+    </Text>
+  </View>
+);

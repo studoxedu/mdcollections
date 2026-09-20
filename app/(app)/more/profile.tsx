@@ -1,0 +1,23 @@
+import React from "react";
+import { Text } from "react-native";
+import { useRouter } from "expo-router";
+import { Screen, Card, Button } from "../../../src/components/ui";
+import { useApp } from "../../../src/context/AppContext";
+export default () => {
+  const r = useRouter(),
+    a = useApp();
+  return (
+    <Screen title="Profile">
+      <Card>
+        <Text style={{ fontSize: 22, fontWeight: "700" }}>{a.user?.name}</Text>
+        <Text>{a.user?.email}</Text>
+        <Text>{a.user?.role}</Text>
+      </Card>
+      <Button
+        title="Sign out"
+        danger
+        onPress={() => r.replace("/(auth)/login" as any)}
+      />
+    </Screen>
+  );
+};

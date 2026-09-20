@@ -1,0 +1,213 @@
+import React from "react";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { colors, radius, spacing } from "../constants/theme";
+import { money } from "../utils/format";
+export const Screen = ({
+  children,
+  title,
+  subtitle,
+  scroll = true,
+}: {
+  children: React.ReactNode;
+  title?: string;
+  subtitle?: string;
+  scroll?: boolean;
+}) => (
+  <View style={s.screen}>
+    {title && (
+      <View style={s.header}>
+        <Text style={s.h1}>{title}</Text>
+        {subtitle && <Text style={s.muted}>{subtitle}</Text>}
+      </View>
+    )}
+    {scroll ? (
+      <ScrollView contentContainerStyle={s.content}>{children}</ScrollView>
+    ) : (
+      children
+    )}
+  </View>
+);
+export const Card = ({
+  children,
+  style,
+}: {
+  children: React.ReactNode;
+  style?: any;
+}) => <View style={[s.card, style]}>{children}</View>;
+export const Button = ({
+  title,
+  onPress,
+  secondary = false,
+  danger = false,
+  disabled = false,
+}: {
+  title: string;
+  onPress: () => void;
+  secondary?: boolean;
+  danger?: boolean;
+  disabled?: boolean;
+}) => (
+  <Pressable
+    disabled={disabled}
+    onPress={onPress}
+    style={[
+      s.btn,
+      secondary && s.btn2,
+      danger && s.danger,
+      disabled && s.disabled,
+    ]}
+  >
+    <Text style={[s.btnText, secondary && s.btnText2]}>{title}</Text>
+  </Pressable>
+);
+export const Field = ({
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  keyboardType,
+}: {
+  label: string;
+  value: string;
+  onChangeText: (x: string) => void;
+  placeholder?: string;
+  keyboardType?: any;
+}) => (
+  <View style={{ marginBottom: 12 }}>
+    <Text style={s.label}>{label}</Text>
+    <TextInput
+      value={value}
+      onChangeText={onChangeText}
+      placeholder={placeholder}
+      keyboardType={keyboardType}
+      style={s.input}
+    />
+  </View>
+);
+export const Chip = ({
+  text,
+  active,
+  onPress,
+}: {
+  text: string;
+  active?: boolean;
+  onPress?: () => void;
+}) => (
+  <Pressable onPress={onPress} style={[s.chip, active && s.chipActive]}>
+    <Text style={[s.chipText, active && s.chipTextActive]}>{text}</Text>
+  </Pressable>
+);
+export const Row = ({
+  children,
+  onPress,
+}: {
+  children: React.ReactNode;
+  onPress?: () => void;
+}) => (
+  <Pressable onPress={onPress} style={s.row}>
+    {children}
+  </Pressable>
+);
+export const Metric = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number;
+}) => (
+  <View style={s.metric}>
+    <Text style={s.metricValue}>{value}</Text>
+    <Text style={s.muted}>{label}</Text>
+  </View>
+);
+export const Empty = ({ text }: { text: string }) => (
+  <View style={s.empty}>
+    <Text style={s.emptyTitle}>Nothing here yet</Text>
+    <Text style={s.muted}>{text}</Text>
+  </View>
+);
+export const Title = ({ children }: { children: React.ReactNode }) => (
+  <Text style={s.h2}>{children}</Text>
+);
+export const moneyText = (n: number) => money(n);
+export const s = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: colors.bg },
+  header: { padding: 20, paddingBottom: 8 },
+  content: { padding: 16, paddingBottom: 100 },
+  h1: { fontSize: 28, fontWeight: "700", color: colors.text },
+  h2: { fontSize: 20, fontWeight: "700", color: colors.text, marginBottom: 12 },
+  muted: { fontSize: 14, color: colors.textMuted },
+  card: {
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    elevation: 1,
+  },
+  btn: {
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 16,
+    marginVertical: 5,
+  },
+  btn2: { backgroundColor: colors.primaryTint },
+  btnText: { color: "#fff", fontSize: 15, fontWeight: "700" },
+  btnText2: { color: colors.primary },
+  danger: { backgroundColor: colors.danger },
+  disabled: { opacity: 0.45 },
+  label: { fontSize: 12, color: colors.textMuted, marginBottom: 6 },
+  input: {
+    height: 48,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 12,
+    backgroundColor: "#fff",
+    paddingHorizontal: 14,
+    fontSize: 15,
+    color: colors.text,
+  },
+  chip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: "#fff",
+    marginRight: 7,
+  },
+  chipActive: {
+    backgroundColor: colors.primaryTint,
+    borderColor: colors.primary,
+  },
+  chipText: { fontSize: 12, color: colors.textMuted },
+  chipTextActive: { color: colors.primary, fontWeight: "700" },
+  row: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  metric: { flex: 1, padding: 8 },
+  metricValue: { fontSize: 19, fontWeight: "700", color: colors.text },
+  empty: { alignItems: "center", padding: 40 },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: colors.text,
+    marginBottom: 4,
+  },
+});

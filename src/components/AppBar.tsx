@@ -1,0 +1,21 @@
+import React from "react";
+import { Text, View } from "react-native";
+import { colors } from "../constants/theme";
+export default function AppBar({ title }: { title: string }) {
+  return (
+    <View
+      style={{
+        height: 54,
+        justifyContent: "center",
+        paddingHorizontal: 16,
+        backgroundColor: "#fff",
+        borderBottomWidth: 1,
+        borderBottomColor: colors.border,
+      }}
+    >
+      <Text style={{ fontSize: 18, fontWeight: "700", color: colors.navy }}>
+        {title}
+      </Text>
+    </View>
+  );
+}

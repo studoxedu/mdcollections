@@ -1,0 +1,28 @@
+import { q, run } from "../database/client";
+import { SyncEvent } from "../types/domain";
+import { now, uuid } from "../utils/id";
+export const addEvent = (
+  e: Omit<SyncEvent, "event_id" | "client_created_at"> & { event_id?: string },
+) => {
+  const event_id = e.event_id || uuid(),
+    client_created_at = now();
+  run(
+    `INSERT INTO sync_events(event_id,business_id,device_id,user_id,event_type,entity_id,payload,client_created_at) VALUES(?,?,?,?,?,?,?,?)`,
+    [
+      event_id,
+      e.business_id,
+      e.device_id,
+      e.user_id,
+      e.event_type,
+      e.entity_id,
+      JSON.stringify(e.payload),
+      client_created_at,
+    ],
+  );
+  return event_id;
+};
+export const pendingEvents = (limit = 200): SyncEvent[] =>
+  q<any>(
+    `SELECT event_id,business_id,device_id,user_id,event_type,entity_id,payload,client_created_at FROM sync_events WHERE sync_status='PENDING' ORDER BY client_created_at LIMIT ?`,
+    [limit],
+  ).map((x) => ({ ...x, payload: JSON.parse(x.payload) }));
